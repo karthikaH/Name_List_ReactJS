@@ -11,6 +11,14 @@ import pink from '@material-ui/core/colors/pink';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 
+import TableHd from '../../components/Tableheader/index'
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
+import DeleteIcon from '@material-ui/icons/Delete';
+
 const theme = createMuiTheme({
     palette: {
       primary: pink,
@@ -45,6 +53,16 @@ const styles = theme => ({
     },
   });
 
+  const CustomTableCell = withStyles(theme => ({
+    head: {
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+    },
+    body: {
+      fontSize: 14,
+    },
+  }))(TableCell);
+
 
 class NameList extends Component {
   state = {
@@ -58,31 +76,40 @@ class NameList extends Component {
     });
   };
 
-  deleleEntry = (e) => {
-    console.log(e.target);
+  deleleEntry = (ts,e) => {
+    let list = Object.assign([], this.state.namesList);
+    list= list.filter(e => e.timestamp !== ts);
+    let list2 =[];
+    list.forEach((e,i) => {
+         list2.push({
+          slNo: i+1,
+          name: e.name,
+          timestamp : e.timestamp
+         }) 
+
+    })
+    this.setState({namesList:list2})
 
   }
 
   submitNameToTable = (event) => {
-    if(this.state.namesList === []){
+    if(this.state.namesList.length === 0){
       this.setState({
         namesList:[{
-        id: 1,
+        slNo: 1,
         name: this.state.name,
         timestamp : new Date().getTime()
         }]
       });
-      console.log(this.state.namesList);
     }else{
       const namesList = Object.assign([], this.state.namesList);
-      let len = namesList.length;
+      let len = this.state.namesList.length;
       namesList.push({
-        id: len,
+        slNo: len + 1,
         name: this.state.name,
         timestamp : new Date().getTime()
       })
       this.setState({namesList:namesList})
-      console.log(this.state.namesList);
     }
   };
 
@@ -115,7 +142,26 @@ class NameList extends Component {
                   </MuiThemeProvider>
               </form>
             </Typography>
-          <CustomizedTable data={this.state.namesList} delObj={this.deleleEntry.bind(this)}></CustomizedTable>
+            <Paper className={classes.root}>
+              <Table className={classes.table}>
+                <TableHd>
+                </TableHd>
+                <TableBody>
+                  {this.state.namesList.map((n,index) => {
+                    return (
+                      <TableRow className={classes.row} key={n.timestamp}>
+                        <CustomTableCell>{n.slNo}</CustomTableCell>
+                        <CustomTableCell component="th" scope="row">
+                          {n.name}
+                        </CustomTableCell>
+                          <CustomTableCell>{n.timestamp}</CustomTableCell>
+                        <CustomTableCell  onClick={this.deleleEntry.bind(this, n.timestamp)}><DeleteIcon/></CustomTableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+         </Paper>
         </div>
       );
     }
