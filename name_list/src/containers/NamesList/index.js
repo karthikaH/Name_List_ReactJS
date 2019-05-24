@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import './NamesList.css';
 import AppBarComp from '../../components/AppBar/index';
-import CustomizedTable from '../../components/Table/index';
 import { withStyles, MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 import Typography from '@material-ui/core/Typography';
